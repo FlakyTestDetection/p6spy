@@ -10,6 +10,10 @@ env:
     - LD_LIBRARY_PATH=/home/db2inst1/sqllib/lib64/
 
 before_install:
+  - wget https://dl.dropboxusercontent.com/u/7897865/apache-maven-3.3.9.zip
+  - unzip -qq apache-maven-3.3.9.zip
+  - export M2_HOME=$PWD/apache-maven-3.3.9
+  - export PATH=$M2_HOME/bin:$PATH
  - mvn -version
  - script/travis/before_install_apt-fast.sh
  - sudo apt-fast update -qq -y
