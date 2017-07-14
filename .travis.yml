@@ -1,6 +1,8 @@
-after_success:
-- if [[ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_JDK_VERSION == "oraclejdk7" ]]; then mvn -B deploy -DskipTests --settings ~/.m2/p6spySettings.xml; fi
-- if [[ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_JDK_VERSION == "oraclejdk7" ]]; then mvn -B jacoco:report coveralls:report; fi
+language: java
+
+# for now we depend upon deprecated CI infrastructure (to keep builds green): https://blog.travis-ci.com/2017-05-04-precise-image-updates
+group: deprecated-2017Q1
+
 before_install:
 - wget https://dl.dropboxusercontent.com/u/7897865/apache-maven-3.3.9.zip
 - unzip -qq apache-maven-3.3.9.zip
