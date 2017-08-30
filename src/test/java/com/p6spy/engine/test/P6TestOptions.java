@@ -1,22 +1,21 @@
-/*
- * #%L
+/**
  * P6Spy
- * %%
- * Copyright (C) 2013 P6Spy
- * %%
+ *
+ * Copyright (C) 2002 - 2017 P6Spy
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
+
 package com.p6spy.engine.test;
 
 import java.util.HashMap;
@@ -37,6 +36,7 @@ public class P6TestOptions extends StandardMBean implements P6TestLoadableOption
   public static final String USER = "user";
   public static final String URL = "url";
   public static final String XA_DATASOURCE = "xaDataSource";
+  public static final String VALIDATION_QUERY = "validationQuery";
 
   private static final Map<String, String> defaults = new HashMap<String, String>();
 
@@ -56,6 +56,7 @@ public class P6TestOptions extends StandardMBean implements P6TestLoadableOption
     setUser2(properties.get(USER2));
     setPassword2(properties.get(PASSWORD2));
     setXaDataSource(properties.get(XA_DATASOURCE));
+    setValidationQuery(properties.get(VALIDATION_QUERY));
   }
 
   /**
@@ -141,5 +142,15 @@ public class P6TestOptions extends StandardMBean implements P6TestLoadableOption
   public XADataSource getXaDataSource() {
     return optionsRepository.get(XADataSource.class, XA_DATASOURCE);
   }
+  
+  @Override
+  public void setValidationQuery(String validationQuery) {
+    optionsRepository.set(String.class, VALIDATION_QUERY, validationQuery);
+  }
 
+  @Override
+  public String getValidationQuery() {
+    return optionsRepository.get(String.class, VALIDATION_QUERY);
+  }
+  
 }

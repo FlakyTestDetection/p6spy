@@ -1,22 +1,21 @@
-/*
- * #%L
+/**
  * P6Spy
- * %%
- * Copyright (C) 2013 P6Spy
- * %%
+ *
+ * Copyright (C) 2002 - 2017 P6Spy
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
+
 package com.p6spy.engine.spy;
 
 import static org.junit.Assert.assertEquals;
@@ -32,6 +31,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.p6spy.engine.common.P6Util;
+import com.p6spy.engine.spy.appender.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,10 +39,6 @@ import org.junit.runners.Parameterized;
 
 import com.p6spy.engine.logging.Category;
 import com.p6spy.engine.logging.P6LogOptions;
-import com.p6spy.engine.spy.appender.MultiLineFormat;
-import com.p6spy.engine.spy.appender.P6TestLogger;
-import com.p6spy.engine.spy.appender.SingleLineFormat;
-import com.p6spy.engine.spy.appender.StdoutLogger;
 import com.p6spy.engine.spy.option.SystemProperties;
 import com.p6spy.engine.test.P6TestFramework;
 
@@ -464,6 +460,48 @@ public class P6TestCommon extends P6TestFramework {
       String query = "select count(*) from customers";
       statement.executeQuery(query);
       assertTrue(super.getLastLogEntry().contains("\n"));
+    }
+
+    // CustomLineFormat cases
+    {
+      // misconfiguration of CustomLineFormat cause it fall back to SingleLineFormat
+      P6SpyOptions.getActiveInstance().setLogMessageFormat(CustomLineFormat.class.getName());
+      P6SpyOptions.getActiveInstance().setCustomLogMessageFormat(null);
+
+
+      String query = "select count(*) from customers";
+      statement.executeQuery(query);
+      assertFalse(super.getLastLogEntry().contains("\n"));
+      assertTrue(super.getLastLogEntry().contains("select count(*) from customers"));
+
+      // reset formatting setting
+      P6SpyOptions.getActiveInstance().setCustomLogMessageFormat(null);
+    }
+    {
+      P6SpyOptions.getActiveInstance().setLogMessageFormat(CustomLineFormat.class.getName());
+      P6SpyOptions.getActiveInstance().setCustomLogMessageFormat("SQL in custom format: #"+
+        CustomLineFormat.SQL+"#");
+
+
+      String query = "select count(*) from customers";
+      statement.executeQuery(query);
+      assertEquals("SQL in custom format: #select count(*) from customers#", super.getLastLogEntry());
+
+      // reset formatting setting
+      P6SpyOptions.getActiveInstance().setCustomLogMessageFormat(null);
+    }
+    {
+      P6SpyOptions.getActiveInstance().setLogMessageFormat(CustomLineFormat.class.getName());
+      P6SpyOptions.getActiveInstance().setCustomLogMessageFormat("SQL in custom format: #"+
+        CustomLineFormat.SQL +"#\n");
+
+
+      String query = "select count(*) from customers";
+      statement.executeQuery(query);
+      assertEquals("SQL in custom format: #select count(*) from customers#\n", super.getLastLogEntry());
+
+      // reset formatting setting
+      P6SpyOptions.getActiveInstance().setCustomLogMessageFormat(null);
     }
 
     // reset to default line format strategy

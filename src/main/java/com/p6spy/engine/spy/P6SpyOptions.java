@@ -1,22 +1,21 @@
-/*
- * #%L
+/**
  * P6Spy
- * %%
- * Copyright (C) 2013 P6Spy
- * %%
+ *
+ * Copyright (C) 2002 - 2017 P6Spy
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
+
 package com.p6spy.engine.spy;
 
 import java.util.HashMap;
@@ -27,10 +26,7 @@ import javax.management.StandardMBean;
 
 import com.p6spy.engine.common.P6Util;
 import com.p6spy.engine.logging.P6LogFactory;
-import com.p6spy.engine.spy.appender.FileLogger;
-import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
-import com.p6spy.engine.spy.appender.P6Logger;
-import com.p6spy.engine.spy.appender.SingleLineFormat;
+import com.p6spy.engine.spy.appender.*;
 import com.p6spy.engine.spy.option.P6OptionsRepository;
 
 public class P6SpyOptions extends StandardMBean implements P6SpyLoadableOptions {
@@ -53,6 +49,7 @@ public class P6SpyOptions extends StandardMBean implements P6SpyLoadableOptions 
     public static final String REALDATASOURCE = "realdatasource";
     public static final String REALDATASOURCECLASS = "realdatasourceclass";
     public static final String REALDATASOURCEPROPERTIES = "realdatasourceproperties";
+    public static final String CUSTOM_LOG_MESSAGE_FORMAT = "customLogMessageFormat";
     public static final String DATABASE_DIALECT_DATE_FORMAT = "databaseDialectDateFormat";
     public static final String JMX = "jmx";
     public static final String JMX_PREFIX = "jmxPrefix";
@@ -78,6 +75,9 @@ public class P6SpyOptions extends StandardMBean implements P6SpyLoadableOptions 
       defaults.put(RELOADPROPERTIES, Boolean.FALSE.toString());
       defaults.put(RELOADPROPERTIESINTERVAL, Long.toString(60));
       defaults.put(DATABASE_DIALECT_DATE_FORMAT, "dd-MMM-yy");
+      defaults.put(CUSTOM_LOG_MESSAGE_FORMAT, String.format("%s|%s|%s|connection%s|%s",
+        CustomLineFormat.CURRENT_TIME, CustomLineFormat.EXECUTION_TIME, CustomLineFormat.CATEGORY,
+        CustomLineFormat.CONNECTION_ID, CustomLineFormat.SQL_SINGLE_LINE));
       defaults.put(JMX, Boolean.TRUE.toString());
     }
 
@@ -109,6 +109,7 @@ public class P6SpyOptions extends StandardMBean implements P6SpyLoadableOptions 
       setRealDataSourceClass(options.get(REALDATASOURCECLASS));
       setRealDataSourceProperties(options.get(REALDATASOURCEPROPERTIES));
       setDatabaseDialectDateFormat(options.get(DATABASE_DIALECT_DATE_FORMAT));
+      setCustomLogMessageFormat(options.get(CUSTOM_LOG_MESSAGE_FORMAT));
       setJmx(options.get(JMX));
       setJmxPrefix(options.get(JMX_PREFIX));
     }
@@ -302,6 +303,27 @@ public class P6SpyOptions extends StandardMBean implements P6SpyLoadableOptions 
     @Override
     public void setDatabaseDialectDateFormat(String databaseDialectDateFormat) {
       optionsRepository.set(String.class, DATABASE_DIALECT_DATE_FORMAT, databaseDialectDateFormat);
+    }
+
+    /**
+     * Returns the customLogMessageFormat.
+     *
+     * @return String
+     */
+    @Override
+    public String getCustomLogMessageFormat() {
+      return optionsRepository.get(String.class, CUSTOM_LOG_MESSAGE_FORMAT);
+    }
+
+
+    /**
+     * Sets the customLogMessageFormat.
+     *
+     * @param customLogMessageFormat The CustomLogMessageFormat to set
+     */
+    @Override
+    public void setCustomLogMessageFormat(String customLogMessageFormat) {
+      optionsRepository.set(String.class, CUSTOM_LOG_MESSAGE_FORMAT, customLogMessageFormat);
     }
 
 
